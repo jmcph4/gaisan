@@ -22,4 +22,5 @@ Some methods Gaisan implements or plans to implement:
         - Euler's method
     - BVPs
         - Shooting method
+    - Monte Carlo methods
 
