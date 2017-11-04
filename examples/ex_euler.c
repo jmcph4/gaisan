@@ -7,6 +7,7 @@
 
 long double f(long double t, long double y)
 {
+    y+=2.0; /* suppress warning */
     return t;
 }
 
