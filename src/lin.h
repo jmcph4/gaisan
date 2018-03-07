@@ -1,9 +1,5 @@
 #ifndef LIN_H_
-#define LIN_H_
-
-#include "matrix.h"
-
-Matrix* gauss_elim(Matrix* A, Matrix* b);
+#define LIN_H_`
 
 #endif /* LIN_H_ */
 

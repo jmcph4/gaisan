@@ -19,6 +19,7 @@ Matrix* matrix_scale(long double k, Matrix* matrix);
 Matrix* matrix_subtract(Matrix* a, Matrix* b);
 Matrix* matrix_multiply(Matrix* a, Matrix* b);
 
+Matrix* matrix_gauss_elim(Matrix* A, Matrix* b);
 
 #endif /* MATRIX_H_ */
 
