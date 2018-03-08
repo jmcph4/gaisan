@@ -59,6 +59,37 @@ void matrix_free(Matrix* matrix)
     matrix->cols = 0;
 }
 
+Matrix* matrix_copy(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return NULL;
+    }
+
+    if(matrix->rows == 0 || matrix->cols == 0) /* trivial case */
+    {
+        return matrix_init(matrix->rows, matrix->cols);
+    }
+
+    Matrix* res = matrix_init(matrix->rows, matrix->cols);
+
+    if(res == NULL) /* check for failure */
+    {
+        return NULL;
+    }
+
+    /* traverse matrix, copying elementwise */
+    for(unsigned int i=0;i<matrix->rows;i++)
+    {
+        for(unsigned int j=0;j<matrix->cols;j++)
+        {
+            res->cells[i][j] = matrix->cells[i][j];
+        }
+    }
+
+    return res;
+}
+
 void matrix_sub_row(unsigned int a, unsigned int b, long double k,
         Matrix* matrix)
 {

@@ -10,6 +10,7 @@ typedef struct
 
 Matrix* matrix_init(unsigned int rows, unsigned int cols);
 void matrix_free(Matrix* matrix);
+Matrix* matrix_copy(Matrix* matrix);
 
 void matrix_sub_row(unsigned int a, unsigned int b, long double k,
         Matrix* matrix);
