@@ -239,13 +239,19 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
         return matrix_init(0, 0); /* null matrix */
     }
 
-    Matrix* x = matrix_init(A->rows, 1);
+    if(A->cols != A->rows) /* bounds check */
+    {
+        return NULL;
+    }
+
+    Matrix* x = matrix_init(A->cols, 1);
 
     for(unsigned int j=0;j<A->rows;j++)
     {
         if(fabs(A->cells[j][j]) == 0.0) /* zero pivot */
         {
-            /* TODO: handle zero pivot */
+            matrix_free(x);
+            return NULL;
         }
 
         for(unsigned int i=j+1;i<A->rows;i++)
@@ -256,7 +262,7 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
         }
     }
 
-    /* peform back-substitution */
+    /* perform back-substitution */
     for(unsigned int i=A->cols-1;i!=0;i--)
     {
         for(unsigned int j=i+1;j<b->cols;j++)
