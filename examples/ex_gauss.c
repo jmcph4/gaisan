@@ -25,7 +25,7 @@ int main(void)
     b->cells[1][0] = 3.0;
     b->cells[2][0] = -6.0;
 
-    Matrix* x = gauss_elim(A, b);
+    Matrix* x = matrix_gauss_elim(A, b);
 
     print_matrix(x);
 
