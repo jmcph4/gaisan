@@ -193,15 +193,17 @@ void print_table(char** labels, long double** data, unsigned int num_rows)
 }
 
 /**
- * Prints the matrix `mat` to `stdout`
+ * Writes the matrix `mat` to `file`
  *
+ * @param file
+ *      the file to write the matrix to
  * @param mat
  *      the matrix being printed
  *
  * */
-void print_matrix(Matrix* mat)
+void write_matrix(FILE* file, Matrix* mat)
 {
-    if(mat == NULL) /* null guard */
+    if(file == NULL || mat == NULL) /* null guard */
     {
         return;
     }
@@ -210,10 +212,10 @@ void print_matrix(Matrix* mat)
     {
         for(unsigned int j=0;j<mat->cols;j++)
         {
-            printf("%*s%Lf ", 1, "", mat->cells[i][j]);
+            fprintf(file, "%*s%Lf ", 1, "", mat->cells[i][j]);
         }
 
-        printf("\n");
+        fprintf(file, "\n");
     }
 }
 

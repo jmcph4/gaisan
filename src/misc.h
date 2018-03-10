@@ -17,8 +17,8 @@
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
 void print_table(char** labels, long double** data, unsigned int num_rows);
-void print_matrix(Matrix* mat);
 
+void write_matrix(FILE* file, Matrix* mat);
 Matrix* read_matrix(FILE* file);
 
 #endif /* MISC_H_ */
