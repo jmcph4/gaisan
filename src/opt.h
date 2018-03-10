@@ -1,3 +1,10 @@
+/**
+ * @file opt.h
+ * @author Jack McPherson
+ *
+ * Declarations for optimisation methods.
+ *
+ * */
 #ifndef OPT_H_
 #define OPT_H_
 

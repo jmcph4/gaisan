@@ -1,3 +1,10 @@
+/**
+ * @file ivp.c
+ * @author Jack McPherson
+ *
+ * Implements methods for solving Initial Value Problems (IVPs).
+ *
+ * */
 #include <stdlib.h>
 #include <math.h>
 
@@ -5,6 +12,23 @@
 #include "diff.h"
 #include "ivp.h"
 
+/**
+ * Solves the IVP `y'(t)=f(t,y), y(a)=y_0` via Euler's method
+ *
+ * @param a
+ *      start of the solution interval
+ * @param b
+ *      end of the solution interval 
+ * @param y_0
+ *      initial value of IVP (i.e. value of `f(a)`)
+ * @param f
+ *      the function to integrate
+ * @param h
+ *      the step size to use for Euler's method calculations
+ * 
+ * @return array of x, y pairs constituting the solution of the IVP
+ *
+ * */
 long double** euler(long double a, long double b, long double y_0,
         long double (*f)(long double, long double), long double h)
 {

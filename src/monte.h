@@ -1,3 +1,10 @@
+/**
+ * @file monte.h
+ * @author Jack McPherson
+ *
+ * Declarations of Monte Carlo methods.
+ *
+ * */
 #ifndef MONTE_H_
 #define MONTE_H_
 

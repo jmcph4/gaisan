@@ -1,3 +1,11 @@
+/**
+ * @file misc.c
+ * @author Jack McPherson
+ *
+ * Implements miscellaneous functionality required by the library (e.g.
+ * printing tables of data, printing matrices, etc.).
+ *
+ * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,6 +13,16 @@
 #include "matrix.h"
 #include "misc.h"
 
+/**
+ * Returns the length of the longest string in `strings`
+ *
+ * @param strings
+ *      an `NULL`-terminated array of strings to search
+ *
+ * @return the length (in characters, ignoring the `NULL` byte) of the longest
+ *      string in `strings`, or 0 on failure
+ *
+ * */
 size_t widest_string(char** strings)
 {
     if(strings == NULL) /* null guard */
@@ -28,6 +46,19 @@ size_t widest_string(char** strings)
     return max_width;
 }
 
+/**
+ * Returns the length of the longest string representation of a number in
+ *      `doubles`
+ *
+ * @param doubles
+ *      array of values to search
+ * @param num_elems
+ *      length of `doubles`
+ *
+ * @return the length (in characters, ignoring the `NULL` byte) of the longest
+ *      string representation of all numbers in `doubles`, or 0 on failure
+ *
+ * */
 size_t widest_long_double(long double* doubles, unsigned int num_elems)
 {
     if(doubles == NULL) /* null guard */
@@ -76,6 +107,18 @@ size_t widest_long_double(long double* doubles, unsigned int num_elems)
     return max_width;
 }
 
+/**
+ * Prints a table of values to `stdout`
+ *
+ * @param labels
+ *      `NULL`-terminated array of strings constituting the header row of the
+ *          table
+ * @param data
+ *      2-D array of values for the table
+ * @param num_rows
+ *      the number of rows in the table
+ *
+ * */
 void print_table(char** labels, long double** data, unsigned int num_rows)
 {
     if(labels == NULL || data == NULL) /* null guard */
@@ -146,6 +189,13 @@ void print_table(char** labels, long double** data, unsigned int num_rows)
     }
 }
 
+/**
+ * Prints the matrix `mat` to `stdout`
+ *
+ * @param mat
+ *      the matrix being printed
+ *
+ * */
 void print_matrix(Matrix* mat)
 {
     if(mat == NULL) /* null guard */

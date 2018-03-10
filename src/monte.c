@@ -1,3 +1,10 @@
+/**
+ * @file monte.c
+ * @author Jack McPherson
+ *
+ * Implements various Monte Carlo methods (and supporting code).
+ *
+ * */
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
@@ -5,6 +12,18 @@
 
 #include "monte.h"
 
+/**
+ * Generates a pseudorandom vector of length `dim`, bounded elementwise by
+ *      `bounds`
+ *
+ * @param dim
+ *      the dimension of the vector
+ * @param bounds
+ *      a 2-D array of bounds on each element of the resultant vector
+ *
+ * @return a pseudorandom vector of length `dim`, or `NULL` on failure
+ *
+ * */
 long double* random_vector(unsigned int dim, long double** bounds)
 {
     if(bounds == NULL) /* null guard */
@@ -39,6 +58,17 @@ long double* random_vector(unsigned int dim, long double** bounds)
     return vec;
 }
 
+/**
+ * Returns the area of the `n`-gon of size `dim`
+ *
+ * @param dim
+ *      the dimension of the object
+ * @param dom
+ *      the domain of the object
+ *
+ * @return the "area" of the `n`-gon
+ *
+ * */
 long double nbox_area(unsigned int dim, long double** dom)
 {
     if(dom == NULL) /* null guard */
@@ -62,6 +92,22 @@ long double nbox_area(unsigned int dim, long double** dom)
     return area;
 }
 
+/**
+ * Returns the "area" of the `dim`-dimensional object defined by the membership
+ *      function `memb` using the Monte Carlo object
+ *
+ * @param memb
+ *      a Boolean function defining whether a given point is inside the object
+ * @param dim
+ *      the dimension of the object
+ * @param dom
+ *      a 2-D array defining the domain of the arena
+ * @param n
+ *      the number of points to use in the Monte Carlo
+ *
+ * @return the "area" of the `dim`-dimensional object
+ *
+ * */
 long double monte_carlo(bool (*memb)(long double*, unsigned int),
         unsigned int dim, long double** dom, unsigned int n)
 {

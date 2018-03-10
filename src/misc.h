@@ -1,3 +1,10 @@
+/**
+ * @file misc.h
+ * @author Jack McPherson
+ *
+ * Declarations for miscellaneous functions.
+ *
+ * */
 #ifndef MISC_H_
 #define MISC_H_
 

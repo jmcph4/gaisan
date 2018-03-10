@@ -1,3 +1,10 @@
+/**
+ * @file root.c
+ * @author Jack McPherson
+ *
+ * Implements rootfinding methods for real-valued functions.
+ *
+ * */
 #include <stdlib.h>
 #include <math.h>
 

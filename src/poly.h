@@ -1,3 +1,10 @@
+/**
+ * @file poly.h
+ * @author Jack McPherson
+ *
+ * Declarations for polynomial methods.
+ *
+ * */
 #ifndef POLY_H_
 #define POLY_H_
 

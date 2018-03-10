@@ -1,3 +1,11 @@
+/**
+ * @file opt.c
+ * @author Jack McPherson
+ *
+ * Implements methods for optimising real-valued functions of various
+ * dimensions.
+ *
+ * */
 #include <stdlib.h>
 #include <math.h>
 

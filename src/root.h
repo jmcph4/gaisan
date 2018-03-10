@@ -1,3 +1,10 @@
+/**
+ * @file root.h
+ * @author Jack McPherson
+ *
+ * Declarations for rootfinding methods.
+ *
+ * */
 #ifndef ROOT_H_
 #define ROOT_H_
 

@@ -3,6 +3,7 @@ PROJ_NAME = gaisan
 SRC_DIR = src
 BUILD_DIR = build
 TEST_DIR = tests
+DOCS_DIR = docs
 INC_DIR = include
 LIB_DIR = lib
 
@@ -24,6 +25,13 @@ tests:
 examples:
 	cd examples; make
 
+.PHONY: docs
+docs:
+	cd $(SRC_DIR);\
+	doxygen;\
+	cd ..;
+
 .PHONY: clean
 clean:
 	rm $(BUILD_DIR)/* -rf
+	rm $(DOCS_DIR)/* -rf

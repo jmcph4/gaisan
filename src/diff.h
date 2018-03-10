@@ -1,3 +1,10 @@
+/**
+ * @file diff.h
+ * @author Jack McPherson
+ *
+ * Declarations for finite difference methods.
+ *
+ * */
 #ifndef DIFF_H_
 #define DIFF_H_
 

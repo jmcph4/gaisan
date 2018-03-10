@@ -1,3 +1,10 @@
+/**
+ * @file ivp.h
+ * @author Jack McPherson
+ *
+ * Declarations for IVP methods.
+ *
+ * */
 #ifndef IVP_H_
 #define IVP_H_
 

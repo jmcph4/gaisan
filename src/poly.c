@@ -1,3 +1,10 @@
+/**
+ * @file poly.c
+ * @author Jack McPherson
+ *
+ * Implements methods for manipulating and evaluating polynomials.
+ *
+ * */
 #include <stdlib.h>
 #include <math.h>
 

@@ -1,8 +1,25 @@
+/**
+ * @file matrix.c
+ * @author Jack McPherson
+ *
+ * Implements methods for manipulating matrices (and, by extension, vectors).
+ *
+ * */
 #include <stdlib.h>
 #include <math.h>
 
 #include "matrix.h"
 
+/**
+ * Initialises a matrix with `rows` rows and `cols` columns (zero-initialised)
+ *
+ * @param rows
+ *      number of rows in the matrix
+ * @param cols
+ *      number of columns in the matrix
+ * @return pointer to initialised matrix or `NULL` pointer on failure
+ *
+ * */
 Matrix* matrix_init(unsigned int rows, unsigned int cols)
 {
     if(rows == 0 || cols == 0) /* bounds check */
@@ -42,6 +59,12 @@ Matrix* matrix_init(unsigned int rows, unsigned int cols)
     return matrix;
 }
 
+/**
+ * Frees memory consumed by `matrix`
+ *
+ * @param matrix
+ *      the matrix to be free'd
+ * */
 void matrix_free(Matrix* matrix)
 {
     if(matrix == NULL) /* null guard */
@@ -60,6 +83,15 @@ void matrix_free(Matrix* matrix)
     matrix->cols = 0;
 }
 
+/**
+ * Performs a (deep) copy of `matrix`
+ *
+ * @param matrix
+ *      the matrix to be copied
+ * 
+ * @return pointer to copy of matrix or `NULL` on failure
+ *
+ * */
 Matrix* matrix_copy(Matrix* matrix)
 {
     if(matrix == NULL) /* null guard */
@@ -91,6 +123,19 @@ Matrix* matrix_copy(Matrix* matrix)
     return res;
 }
 
+/**
+ * Subtracts `k` times row `b` from row `a` (`k` defaults to 1).
+ *
+ * @param a
+ *      index of row being subtracted from
+ * @param b
+ *      index of row being subtracted
+ * @param k
+ *      scalar factor that row at index `b` is scaled by
+ * @param matrix
+ *      the matrix being operated on
+ *
+ * */
 void matrix_sub_row(unsigned int a, unsigned int b, long double k,
         Matrix* matrix)
 {
@@ -114,6 +159,17 @@ void matrix_sub_row(unsigned int a, unsigned int b, long double k,
     }
 }
 
+/**
+ * Add two matrices, `a` and `b`
+ *
+ * @param a
+ *      first matrix
+ * @param b
+ *      second matrix
+ *
+ * @return result of `a` + `b` or `NULL` on failure
+ *
+ * */
 Matrix* matrix_add(Matrix* a, Matrix* b)
 {
     if(a == NULL || b == NULL) /* null guard */
@@ -145,6 +201,17 @@ Matrix* matrix_add(Matrix* a, Matrix* b)
     return res;
 }
 
+/**
+ * Multiplies `matrix` by a scalar `k`
+ *
+ * @param k
+ *      scalar to multiply the matrix `matrix` by
+ * @param matrix
+ *      the matrix being scaled
+ *
+ * @return result of `k` * `matrix`, or `NULL` on failure
+ *
+ * */
 Matrix* matrix_scale(long double k, Matrix* matrix)
 {
     if(matrix == NULL) /* null guard */
@@ -171,6 +238,17 @@ Matrix* matrix_scale(long double k, Matrix* matrix)
     return res;
 }
 
+/**
+ * Subtracts the matrix `b` from `a`
+ *
+ * @param a
+ *      the matrix being subtracted from
+ * @param b
+ *      the matrix subtracted from `a`
+ *
+ * @return the result of `a` - `b`, or `NULL` on failure
+ *
+ * */
 Matrix* matrix_subtract(Matrix* a, Matrix* b)
 {
     if(a == NULL || b == NULL) /* null guard */
@@ -192,6 +270,17 @@ Matrix* matrix_subtract(Matrix* a, Matrix* b)
     return res;
 }
 
+/**
+ * Multiplies two matrices, `a` and `b`
+ *
+ * @param a
+ *      LHS matrix
+ * @param b
+ *      RHS matrix
+ *
+ * @return result of `a` * `b`, or `NULL` on failure
+ *
+ * */
 Matrix* matrix_multiply(Matrix* a, Matrix* b)
 {
     if(a == NULL || b == NULL) /* null guard */
@@ -232,6 +321,18 @@ Matrix* matrix_multiply(Matrix* a, Matrix* b)
     return res;
 }
 
+/**
+ * Performs Gaussian elimination on the system defined by `Ax=b`
+ *
+ * @param A
+ *      the matrix containing the coefficients of each equation in the system
+ * @param b
+ *      the vector containing the RHS values of each equation in the system
+ *
+ * @return the vector `x` containing the solutions of the system `Ax=b`, or
+ *      `NULL` on failure
+ *
+ * */
 Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
 {
     if(A == NULL || b == NULL) /* null guard */

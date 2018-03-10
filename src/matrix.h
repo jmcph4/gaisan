@@ -1,3 +1,10 @@
+/**
+ * @file matrix.h
+ * @author Jack McPherson
+ *
+ * Declarations for matrix methods.
+ *
+ * */
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
