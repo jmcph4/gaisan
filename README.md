@@ -1,4 +1,4 @@
-# Gaisan #
+# Gaisan  - fast numerical methods in computational science #
 ---
 
 A C library of numerical methods in computational science, designed to be fast,
@@ -33,11 +33,13 @@ To build the library, simply
 
     make
 
+To generate documentation, run
+
+    make docs
+
 To build the examples (in the `examples/` directory), run
 
     make examples
-
-as well.
 
 ## Examples ##
 Gaisan contains full, working examples in the `examples/` directory; however, here are some snippets:
