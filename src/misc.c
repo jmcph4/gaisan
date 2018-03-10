@@ -219,6 +219,23 @@ void write_matrix(FILE* file, Matrix* mat)
     }
 }
 
+/**
+ * Prints the matrix `mat` to `stdout`
+ *
+ * @param mat
+ *      the matrix to print
+ *
+ * */
+void print_matrix(Matrix* mat)
+{
+    if(mat == NULL) /* null guard */
+    {
+        return;
+    }
+
+    write_matrix(stdout, mat);
+}
+
 Matrix* read_matrix(FILE* file)
 {
     if(file == NULL) /* null guard */

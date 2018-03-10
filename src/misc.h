@@ -21,5 +21,7 @@ void print_table(char** labels, long double** data, unsigned int num_rows);
 void write_matrix(FILE* file, Matrix* mat);
 Matrix* read_matrix(FILE* file);
 
+void print_matrix(Matrix* mat);
+
 #endif /* MISC_H_ */
 
