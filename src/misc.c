@@ -236,6 +236,15 @@ void print_matrix(Matrix* mat)
     write_matrix(stdout, mat);
 }
 
+/**
+ * Reads a matrix from the file `file`
+ *
+ * @param file
+ *      the file to be read from
+ *
+ * @return the matrix contained in `file`, or `NULL` on failure
+ *
+ * */
 Matrix* read_matrix(FILE* file)
 {
     if(file == NULL) /* null guard */
