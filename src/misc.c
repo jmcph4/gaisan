@@ -8,9 +8,12 @@
  * */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "matrix.h"
+#include "constants.h"
 #include "misc.h"
 
 /**
@@ -212,5 +215,114 @@ void print_matrix(Matrix* mat)
 
         printf("\n");
     }
+}
+
+Matrix* read_matrix(FILE* file)
+{
+    if(file == NULL) /* null guard */
+    {
+        return NULL;
+    }
+
+    /* buffer variables */
+    size_t cap = 0; /* current capacity of buffer */
+    size_t len = 0; /* current length of buffer */
+    char* buf = calloc(INIT_BUF_LEN, sizeof(char)); /* buffer */
+
+    /* data array variables */
+    unsigned int r = 0; /* current row */
+    unsigned int c = 0; /* current column */
+    unsigned int rows = 1; /* number of rows */
+    unsigned int cols = 1; /* number of columns */
+    long double** data = calloc(1, sizeof(long double*));
+    data[0] = calloc(1, sizeof(long double));
+
+    char ch = '\0'; /* current character */
+    bool newline_prev = false;
+    bool first_row = true;
+
+    /* main parsing loop */
+    while(true)
+    {
+        ch = fgetc(file); /* fetch new character */
+
+        if(ch == EOF) /* check for EOF */
+        {
+            break;
+        }
+
+        if(isdigit(ch) || ch == '.' || ch == '-') /* value in-process */
+        {
+            if(len + 1 == cap) /* buffer full, expand */
+            {
+                cap *= BUF_EXPAND_FACTOR;
+                buf = realloc(buf, cap * sizeof(char));
+            }
+            
+            buf[len++] = ch; /* append to buffer */
+            newline_prev = false;
+        }
+        else if(isblank(ch) || ch == '\n') /* captured new value */
+        {
+            
+            buf[len] = '\0'; /* NULL-terminate buffer */
+            data[r][c++] = atof(buf); /* save value */ 
+
+            if(isblank(ch)) /* add column */
+            {
+                if(first_row)
+                {
+                    data[r] = realloc(data[r], ++cols * sizeof(long double));
+                }
+                
+                newline_prev = false;
+            }
+            else if(ch == '\n') /* add row */
+            {
+                if(newline_prev) /* encountered blank line */
+                {
+                    break;
+                }
+                
+                data = realloc(data, ++rows * sizeof(long double*));
+                data[++r] = calloc(cols, sizeof(long double));
+                
+                c = 0; /* reset column index */
+                newline_prev = true; /* set newline flag */
+                first_row = false;
+            }
+            
+            /* reset buffer */
+            free(buf);
+            len = 0;
+            cap = INIT_BUF_LEN;
+            buf = calloc(cap, sizeof(char));
+        }
+        else /* invalid character */
+        {
+            return NULL;
+        }
+    }
+
+    /* adjust */
+    rows--;
+
+    Matrix* matrix = matrix_init(rows, cols);
+
+    /* copy data into matrix and free as we go */    
+    for(unsigned int i=0;i<rows;i++)
+    {
+        for(unsigned int j=0;j<cols;j++)
+        {
+            matrix->cells[i][j] = data[i][j];
+        }
+
+        free(data[i]);
+    }
+
+    free(data);
+    free(buf);
+
+    return matrix;
 }
 

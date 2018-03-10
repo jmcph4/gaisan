@@ -19,5 +19,7 @@
 void print_table(char** labels, long double** data, unsigned int num_rows);
 void print_matrix(Matrix* mat);
 
+Matrix* read_matrix(FILE* file);
+
 #endif /* MISC_H_ */
 

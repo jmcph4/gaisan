@@ -26,5 +26,17 @@
  * */
 #define GOLDEN_RATIO 1.6180339887498948482
 
+/**
+ * initial buffer capacity
+ *
+ * */
+#define INIT_BUF_LEN 32
+
+/**
+ * default buffer expansion factor
+ *
+ * */
+#define BUF_EXPAND_FACTOR 2
+
 #endif /* CONSTANTS_H_ */
 
