@@ -7,6 +7,7 @@
  * */
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "matrix.h"
 
@@ -319,6 +320,28 @@ Matrix* matrix_multiply(Matrix* a, Matrix* b)
     }
 
     return res;
+}
+
+Matrix* matrix_randmat(unsigned int rows, unsigned int cols)
+{
+    if(rows == 0 || cols == 0) /* trivial case */
+    {
+        return matrix_init(rows, cols);
+    }
+
+    Matrix* matrix = matrix_init(rows, cols);
+
+    srand(time(NULL));
+
+    for(unsigned int i=0;i<rows;i++)
+    {
+        for(unsigned int j=0;j<cols;j++)
+        {
+            matrix->cells[i][j] = rand();
+        }
+    }
+
+    return matrix;
 }
 
 /**
