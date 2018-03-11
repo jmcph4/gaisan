@@ -345,6 +345,94 @@ Matrix* matrix_randmat(unsigned int rows, unsigned int cols)
 }
 
 /**
+ * Returns the augmented matrix obtained by appending the matrix `b` onto the
+ *      right of the matrix `a`.
+ *
+ * @param a
+ *      the LHS matrix
+ * @param b
+ *      the RHS matrix
+ *
+ * @return the augmented matrix with `b` on the right, or `NULL` on failure
+ *
+ * */
+Matrix* matrix_right_augment(Matrix* a, Matrix* b)
+{
+    if(a == NULL || b == NULL) /* null guard */
+    {
+        return NULL;
+    }
+
+    if(a->rows != b->rows) /* bounds check */
+    {
+        return NULL;
+    }
+
+    Matrix* c = matrix_init(a->rows, a->cols + b->cols);
+
+    for(unsigned int i=0;i<c->rows;i++)
+    {
+        for(unsigned int j=0;j<c->cols;j++)
+        {
+            if(j < a->cols)
+            {
+                c->cells[i][j] = a->cells[i][j];
+            }
+            else
+            {
+                c->cells[i][j] = b->cells[i][j-a->cols];
+            }
+        }
+    }
+
+    return c;
+}
+
+/**
+ * Returns the augmented matrix obtained by appending the matrix `b` onto the
+ *      bottom of the matrix `a`.
+ *
+ * @param a
+ *      the top matrix
+ * @param b
+ *      the bottom matrix
+ *
+ * @return the augmented matrix with `b` on the bottom, or `NULL` on failure
+ *
+ * */
+Matrix* matrix_bottom_augment(Matrix* a, Matrix* b)
+{
+    if(a == NULL || b == NULL) /* null guard */
+    {
+        return NULL;
+    }
+
+    if(a->cols != b->cols) /* bounds check */
+    {
+        return NULL;
+    }
+
+    Matrix* c = matrix_init(a->rows + b->rows, a->cols);
+
+    for(unsigned int i=0;i<c->rows;i++)
+    {
+        for(unsigned int j=0;j<c->cols;j++)
+        {
+            if(i < a->rows)
+            {
+                c->cells[i][j] = a->cells[i][j];
+            }
+            else
+            {
+                c->cells[i][j] = b->cells[i-a->rows][j];
+            }
+        }
+    }
+
+    return c;
+}
+
+/**
  * Performs Gaussian elimination on the system defined by `Ax=b`
  *
  * @param A
