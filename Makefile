@@ -8,10 +8,19 @@ INC_DIR = include
 LIB_DIR = lib
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Wshadow -pedantic -std=c11 -g -lm -march=native
+REL_CFLAGS = -Wall -Wextra -Wshadow -pedantic -std=c11 -Ofast -lm -march=native
+DBG_CFLAGS = -Wall -Wextra -Wshadow -pedantic -std=c11 -g3 -lm -march=native
 
 $(BUILD_DIR)/$(PROJ_NAME).a:
-	$(CC) -c $(SRC_DIR)/*.c $(CFLAGS)
+	$(CC) -c $(SRC_DIR)/*.c $(REL_CFLAGS)
+	mv *.o $(BUILD_DIR)
+	ar -cvq $(BUILD_DIR)/lib$(PROJ_NAME).a $(BUILD_DIR)/*.o
+	ar -t $(BUILD_DIR)/lib$(PROJ_NAME).a
+	rm $(BUILD_DIR)/*.o
+
+.PHONY: debug
+debug:
+	$(CC) -c $(SRC_DIR)/*.c $(DBG_CFLAGS)
 	mv *.o $(BUILD_DIR)
 	ar -cvq $(BUILD_DIR)/lib$(PROJ_NAME).a $(BUILD_DIR)/*.o
 	ar -t $(BUILD_DIR)/lib$(PROJ_NAME).a
