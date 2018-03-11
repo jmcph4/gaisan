@@ -322,6 +322,17 @@ Matrix* matrix_multiply(Matrix* a, Matrix* b)
     return res;
 }
 
+/**
+ * Returns a `rows` by `cols` random matrix
+ *
+ * @param rows
+ *      the number of rows
+ * @params cols
+ *      the number of columns
+ *
+ * @return a random matrix of specified dimensions
+ *
+ * */
 Matrix* matrix_randmat(unsigned int rows, unsigned int cols)
 {
     if(rows == 0 || cols == 0) /* trivial case */
