@@ -9,6 +9,7 @@
 #include <math.h>
 #include <time.h>
 
+#include "constants.h"
 #include "matrix.h"
 
 /**
@@ -160,6 +161,64 @@ void matrix_sub_row(unsigned int a, unsigned int b, long double k,
     }
 }
 
+void matrix_add_row(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return;
+    }
+
+    matrix->cells = realloc(matrix->cells,
+            (matrix->rows + 1) * sizeof(long double*));
+    matrix->cells[matrix->rows] = calloc(matrix->cols, sizeof(long double));
+    matrix->rows++;
+}
+
+void matrix_add_col(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return;
+    }
+
+    for(unsigned int i=0;i<matrix->rows;i++)
+    {
+        matrix->cells[i] = realloc(matrix->cells[i],
+                (matrix->cols + 1) * sizeof(long double));
+        matrix->cells[i][matrix->cols] = 0;
+    }
+
+    matrix->cols++;
+}
+
+void matrix_drop_row(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return;
+    }
+
+    matrix->cells = realloc(matrix->cells,
+            (matrix->rows - 1) * sizeof(long double*));
+    matrix->rows--;
+}
+
+void matrix_drop_col(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return;
+    }
+
+    for(unsigned int i=0;i<matrix->rows;i++)
+    {
+        matrix->cells[i] = realloc(matrix->cells[i],
+                (matrix->cols - 1) * sizeof(long double));
+    }
+
+    matrix->cols--;
+}
+
 /**
  * Add two matrices, `a` and `b`
  *
@@ -185,7 +244,7 @@ Matrix* matrix_add(Matrix* a, Matrix* b)
 
     Matrix* res = matrix_init(a->rows, a->cols);
 
-    if(res != NULL) /* check for failure */
+    if(res == NULL) /* check for failure */
     {
         return NULL;
     }
@@ -504,5 +563,171 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
     }
 
     return x;
+}
+
+void pad_to_power_2(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return;
+    }
+
+    unsigned int n = matrix->rows;
+    n--;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n |= n >> 32; /* assuming 64-bit uints */
+    n++;
+
+    for(unsigned int i=matrix->rows;i<n;i++)
+    {
+        matrix_add_row(matrix);
+        matrix_add_col(matrix);
+    }
+}
+
+void trim(unsigned int n, Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return;
+    }
+
+    if(n >= matrix->rows) /* trivial case */
+    {
+        return;
+    }
+
+    unsigned int start = matrix->rows;
+
+    for(unsigned int i=0;i<start-n;i++)
+    {
+        matrix_drop_row(matrix);
+        matrix_drop_col(matrix);
+    }
+}
+
+/**
+ * Multiplies the two matrices `a` and `b` using Strassen's algorithm
+ *
+ * Note that both matrices must be square and that, for matrices of dimension
+ *      less than or equal to STRASSEN_MIN_SIZE, this method is equivalent
+ *      to naive matrix multiplication.
+ *
+ * @param a
+ *      the LHS matrix
+ * @param b
+ *      the RHS matrix
+ *
+ * @return the result of `a` * `b`, or `NULL` on failure
+ *
+ * */
+Matrix* strassen(Matrix* a, Matrix* b)
+{
+    if(a == NULL || b == NULL) /* null guard */
+    {
+        return NULL;
+    }
+
+    /* bounds check */
+    if(a->rows != b-> rows || a->cols != b->cols || a->rows != a->cols)
+    {
+        return NULL;
+    }
+
+    if(a->rows <= STRASSEN_MIN_SIZE) /* base case */
+    {
+        return matrix_multiply(a, b);
+    }
+
+    unsigned int original_size = a->rows;
+
+    /* padding */
+    if(!((a->rows != 0) && ((a->rows & (a->rows - 1)) == 0)))
+    {
+        pad_to_power_2(a);
+        pad_to_power_2(b);
+    }
+
+    unsigned int n = a->rows / 2;
+
+    /* submatrices */
+    Matrix* A[4];
+    Matrix* B[4];
+    Matrix* C[4];
+    Matrix* P[7];
+
+    /* initialise submatrices */
+    for(unsigned int i=0;i<STRASSEN_NUM_SUBMATRICES;i++)
+    {
+        A[i] = matrix_init(n, n);
+        B[i] = matrix_init(n, n);
+        C[i] = matrix_init(n, n);
+    }
+
+    /* extract submatrices */
+    for(unsigned int i=0;i<n;i++)
+    {
+        for(unsigned int j=0;j<n;j++)
+        {
+            /* top-left */
+            A[0]->cells[i][j] = a->cells[i][j];
+            B[0]->cells[i][j] = b->cells[i][j];
+
+            /* top-right */
+            A[1]->cells[i][j] = a->cells[i][n+j];
+            B[1]->cells[i][j] = b->cells[i][n+j];
+
+            /* bottom-left */
+            A[2]->cells[i][j] = a->cells[n+i][j];
+            B[2]->cells[i][j] = b->cells[n+i][j];
+
+            /* bottom-right */
+            A[3]->cells[i][j] = a->cells[n+i][n+j];
+            B[3]->cells[i][j] = b->cells[n+i][n+j];
+        }
+    }
+    
+    /* calculate component matrices */
+    P[0] = strassen(A[0], matrix_subtract(B[1], B[3]));
+    P[1] = strassen(matrix_add(A[0], A[1]), B[3]);
+    P[2] = strassen(matrix_add(A[2], A[3]), B[0]);
+    P[3] = strassen(A[3], matrix_subtract(B[2], B[0]));
+    P[4] = strassen(matrix_add(A[0], A[3]), matrix_add(B[0], B[3]));
+    P[5] = strassen(matrix_subtract(A[1], A[3]), matrix_add(B[2], B[3]));
+    P[6] = strassen(matrix_subtract(A[0], A[2]), matrix_add(B[0], B[1]));
+
+    /* calculate submatrices of result matrix */
+    C[0] = matrix_add(matrix_subtract(matrix_add(P[4], P[3]), P[1]), P[5]);
+    C[1] = matrix_add(P[0], P[1]);
+    C[2] = matrix_add(P[2], P[3]);
+    C[3] = matrix_subtract(matrix_add(P[0], P[4]), matrix_add(P[2], P[6]));
+    
+    /* join */
+    Matrix* top_row = matrix_right_augment(C[0], C[1]);
+    Matrix* bottom_row = matrix_right_augment(C[2], C[3]);
+    Matrix* c = matrix_bottom_augment(top_row, bottom_row);
+
+    /* trim padding (if any) */
+    if(c->rows != original_size)
+    {
+        trim(original_size, c);
+    }
+
+    /* free matrices */
+    matrix_free(top_row);
+    matrix_free(bottom_row);
+
+    for(unsigned int i=0;i<STRASSEN_NUM_SUBMATRICES;i++)
+    {
+        matrix_free(A[i]);
+        matrix_free(B[i]);
+        matrix_free(C[i]);
+    }
+    
+    return c;
 }
 

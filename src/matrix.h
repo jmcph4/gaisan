@@ -20,6 +20,11 @@ Matrix* matrix_init(unsigned int rows, unsigned int cols);
 void matrix_free(Matrix* matrix);
 Matrix* matrix_copy(Matrix* matrix);
 
+void matrix_add_row(Matrix* matrix);
+void matrix_add_col(Matrix* matrix);
+void matrix_pop_row(Matrix* matrix);
+void matrix_pop_col(Matrix* matrix);
+
 /* elementary row operations */
 void matrix_sub_row(unsigned int a, unsigned int b, long double k,
         Matrix* matrix);
@@ -36,6 +41,7 @@ Matrix* matrix_right_augment(Matrix* a, Matrix* b);
 Matrix* matrix_bottom_augment(Matrix* a, Matrix* b);
 
 Matrix* matrix_gauss_elim(Matrix* A, Matrix* b);
+Matrix* strassen(Matrix* a, Matrix* b);
 
 #endif /* MATRIX_H_ */
 

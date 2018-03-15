@@ -38,5 +38,17 @@
  * */
 #define BUF_EXPAND_FACTOR 2
 
+/**
+ * default minimum size for Strassen base case
+ *
+ * */
+#define STRASSEN_MIN_SIZE 3
+
+/**
+ * default number of submatrices for Strassen's algorithm
+ *
+ * */
+#define STRASSEN_NUM_SUBMATRICES 4
+
 #endif /* CONSTANTS_H_ */
 
