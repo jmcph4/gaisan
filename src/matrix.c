@@ -83,6 +83,8 @@ void matrix_free(Matrix* matrix)
     free(matrix->cells); /* free rows */
     matrix->rows = 0;
     matrix->cols = 0;
+
+    free(matrix);
 }
 
 /**
