@@ -309,6 +309,7 @@ Matrix* read_matrix(FILE* file)
             {
                 if(newline_prev) /* encountered blank line */
                 {
+                    free(buf);
                     break;
                 }
                 
@@ -347,10 +348,10 @@ Matrix* read_matrix(FILE* file)
 
         free(data[i]);
     }
-
+   
+    free(data[rows]);
     free(data);
-    free(buf);
-
+    
     return matrix;
 }
 
