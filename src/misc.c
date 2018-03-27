@@ -329,6 +329,15 @@ Matrix* read_matrix(FILE* file)
         }
         else /* invalid character */
         {
+            /* free data array */
+            for(unsigned int i=0;i<rows;i++)
+            {
+                free(data[i]);
+            }
+
+            free(data);
+            free(buf);
+            
             return NULL;
         }
     }
