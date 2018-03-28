@@ -35,6 +35,8 @@ Matrix* matrix_scale(long double k, Matrix* matrix);
 Matrix* matrix_subtract(Matrix* a, Matrix* b);
 Matrix* matrix_multiply(Matrix* a, Matrix* b);
 
+Matrix* matrix_transpose(Matrix* matrix);
+
 /* utilities */
 Matrix* matrix_randmat(unsigned int rows, unsigned int cols);
 Matrix* matrix_right_augment(Matrix* a, Matrix* b);

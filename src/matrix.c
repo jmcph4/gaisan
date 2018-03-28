@@ -384,6 +384,40 @@ Matrix* matrix_multiply(Matrix* a, Matrix* b)
 }
 
 /**
+ * Transposes the matrix `matrix`
+ *
+ * @param matrix
+ *      the matrix to be transposed
+ *
+ * @return the transpose of the matrix, or `NULL` on failure
+ *
+ * */
+Matrix* matrix_transpose(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return NULL;
+    }
+
+    Matrix* transpose = matrix_init(matrix->cols, matrix->rows);
+
+    if(transpose == NULL)
+    {
+        return NULL;
+    }
+
+    for(unsigned int i=0;i<matrix->rows;i++)
+    {
+        for(unsigned int j=0;j<matrix->cols;j++)
+        {
+            transpose->cells[j][i] = matrix->cells[i][j];
+        }
+    }
+
+    return transpose;
+}
+
+/**
  * Returns a `rows` by `cols` random matrix
  *
  * @param rows
