@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
+#include <limits.h>
 
 #include "constants.h"
 #include "matrix.h"
@@ -148,8 +150,7 @@ void matrix_swap_rows(unsigned int a, unsigned int b, Matrix* matrix)
     }
 
     /* bounds check */
-    if(a == 0 || b == 0 || a - 1 > matrix->rows || b - 1 > matrix->rows ||
-            a == b)
+    if(a > matrix->rows || b > matrix->rows || a == b)
     {
         return;
     }
@@ -187,7 +188,7 @@ void matrix_scale_row(unsigned int a, long double k, Matrix* matrix)
         return;
     }
 
-    if(a == 0 || a - 1 > matrix->rows) /* bounds check */
+    if(a > matrix->rows) /* bounds check */
     {
         return;
     }
@@ -222,8 +223,8 @@ void matrix_add_row(unsigned int a, unsigned int b, long double k,
         return;
     }
 
-    if(a == 0 || b == 0|| a - 1 > matrix->rows || b - 1 > matrix->rows ||
-            a == b) /* bounds check row indices */
+    /* bounds check */
+    if(a > matrix->rows || b > matrix->rows || a == b)
     {
         return;
     }
@@ -491,8 +492,6 @@ Matrix* matrix_transpose(Matrix* matrix)
     return transpose;
 }
 
-
-
 /**
  * Returns a `rows` by `cols` random matrix
  *
@@ -630,7 +629,7 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
 {
     if(A == NULL || b == NULL) /* null guard */
     {
-        return matrix_init(0, 0); /* null matrix */
+        return NULL;
     }
 
     if(A->cols != A->rows) /* bounds check */
@@ -638,7 +637,7 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
         return NULL;
     }
 
-    Matrix* x = matrix_init(A->cols, 1);
+    Matrix* x = matrix_init(A->cols, b->cols);
 
     for(unsigned int j=0;j<A->rows;j++)
     {
@@ -657,7 +656,7 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
     }
 
     /* perform back-substitution */
-    for(unsigned int i=A->cols-1;i!=0;i--)
+    for(unsigned int i=A->cols-1;i!=UINT_MAX;i--)
     {
         for(unsigned int j=i+1;j<b->cols;j++)
         {
@@ -667,7 +666,7 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
                     x->cells[j][k];
             }
         }
-
+        
         for(unsigned int j=0;j<x->cols;j++)
         {
             x->cells[i][j] = b->cells[i][j] / A->cells[i][i];
@@ -691,7 +690,6 @@ void pad_to_power_2(Matrix* matrix)
     n |= n >> 4;
     n |= n >> 8;
     n |= n >> 16;
-    n |= n >> 32; /* assuming 64-bit uints */
     n++;
 
     for(unsigned int i=matrix->rows;i<n;i++)
