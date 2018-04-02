@@ -459,6 +459,49 @@ Matrix* matrix_multiply(Matrix* a, Matrix* b)
 }
 
 /**
+ * Computes the inverse of the matrix, `matrix`
+ *
+ * @param matrix
+ *      the square matrix to be inverted
+ *
+ * @return the inverse of the matrix, or `NULL` on failure
+ *
+ * */
+Matrix* matrix_invert(Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return NULL;
+    }
+
+    if(matrix->rows != matrix->cols) /* bounds check */
+    {
+        return NULL;
+    }
+
+    Matrix* I = matrix_identity(matrix->rows);
+
+    if(I == NULL)
+    {
+        return NULL;
+    }
+
+    Matrix* A = matrix_copy(matrix);
+
+    if(A == NULL) /* check for failure */
+    {
+        return NULL;
+    }
+    
+    Matrix* inverse = matrix_gauss_elim(A, I);
+
+    matrix_free(A);
+    matrix_free(I);
+
+    return inverse;
+}
+
+/**
  * Transposes the matrix `matrix`
  *
  * @param matrix
@@ -490,6 +533,37 @@ Matrix* matrix_transpose(Matrix* matrix)
     }
 
     return transpose;
+}
+
+/**
+ * Returns the `n` x `n` identity matrix
+ *
+ * @param n
+ *      the size of the identity matrix
+ *
+ * @return the identity matrix of size `n`, or `NULL` on failure
+ *
+ * */
+Matrix* matrix_identity(unsigned int n)
+{
+    if(n == 0) /* bounds check */
+    {
+        return NULL;
+    }
+
+    Matrix* identity = matrix_init(n, n);
+
+    if(identity == NULL) /* check for failure */
+    {
+        return NULL;
+    }
+
+    for(unsigned int i=0;i<n;i++)
+    {
+        identity->cells[i][i] = 1;
+    }
+
+    return identity;
 }
 
 /**
