@@ -20,13 +20,15 @@ Matrix* matrix_init(unsigned int rows, unsigned int cols);
 void matrix_free(Matrix* matrix);
 Matrix* matrix_copy(Matrix* matrix);
 
-void matrix_add_row(Matrix* matrix);
-void matrix_add_col(Matrix* matrix);
+void matrix_append_row(Matrix* matrix);
+void matrix_append_col(Matrix* matrix);
 void matrix_pop_row(Matrix* matrix);
 void matrix_pop_col(Matrix* matrix);
 
 /* elementary row operations */
-void matrix_sub_row(unsigned int a, unsigned int b, long double k,
+void matrix_swap_rows(unsigned int a, unsigned int b, Matrix* matrix);
+void matrix_scale_row(unsigned int a, long double k, Matrix* matrix);
+void matrix_add_rows(unsigned int a, unsigned int b, long double k,
         Matrix* matrix);
 
 /* arithmetic operations */

@@ -127,20 +127,94 @@ Matrix* matrix_copy(Matrix* matrix)
     return res;
 }
 
+/********************* Elementary Row Operations (EROs) **********************/
+
 /**
- * Subtracts `k` times row `b` from row `a` (`k` defaults to 1).
+ * Swaps rows `a` and `b`
  *
  * @param a
- *      index of row being subtracted from
+ *      index of first row
  * @param b
- *      index of row being subtracted
+ *      index of second row
+ * @param matrix
+ *      the matrix being operated on
+ *
+ * */
+void matrix_swap_rows(unsigned int a, unsigned int b, Matrix* matrix)
+{
+    if(matrix == NULL)
+    {
+        return;
+    }
+
+    /* bounds check */
+    if(a == 0 || b == 0 || a - 1 > matrix->rows || b - 1 > matrix->rows ||
+            a == b)
+    {
+        return;
+    }
+
+    long double* tmp = calloc(matrix->cols, sizeof(long double));
+
+    if(tmp == NULL)
+    {
+        return;
+    }
+
+    memcpy(tmp, matrix->cells[a], matrix->rows * sizeof(long double));
+    memcpy(matrix->cells[b], matrix->cells[a],
+            matrix->rows * sizeof(long double));
+    memcpy(matrix->cells[b], tmp, matrix->rows * sizeof(long double));
+
+    free(tmp);
+}
+
+/**
+ * Scales row `a` by factor `k` (`k` defaults to 1)
+ *
+ * @param a
+ *      index of row being scaled
+ * @param k
+ *      factor to scale row by
+ * @param matrix
+ *      the matrix being operated on
+ *
+ * */
+void matrix_scale_row(unsigned int a, long double k, Matrix* matrix)
+{
+    if(matrix == NULL) /* null guard */
+    {
+        return;
+    }
+
+    if(a == 0 || a - 1 > matrix->rows) /* bounds check */
+    {
+        return;
+    }
+
+    long double factor = k == 0.0 ? 1.0 : k;
+
+    /* iteratively scale each row */
+    for(unsigned int i=0;i<matrix->cols;i++)
+    {
+        matrix->cells[a][i] *= factor;
+    }
+}
+
+/**
+ * Adds `k` times row `b` to row `a` (`k` defaults to 1)
+ *
+ * @param a
+ *      index of row being added to
+ * @param b
+ *      index of row being added
  * @param k
  *      scalar factor that row at index `b` is scaled by
  * @param matrix
  *      the matrix being operated on
  *
  * */
-void matrix_sub_row(unsigned int a, unsigned int b, long double k,
+void matrix_add_row(unsigned int a, unsigned int b, long double k,
         Matrix* matrix)
 {
     if(matrix == NULL) /* null guard */
@@ -156,14 +230,14 @@ void matrix_sub_row(unsigned int a, unsigned int b, long double k,
 
     long double factor = k == 0.0 ? 1.0 : k;
 
-    /* iteratively subtract from each row */
+    /* iteratively add to each row */
     for(unsigned int i=0;i<matrix->cols;i++)
     {
-        matrix->cells[a][i] -= factor * matrix->cells[b][i];
+        matrix->cells[a][i] += factor * matrix->cells[b][i];
     }
 }
 
-void matrix_add_row(Matrix* matrix)
+void matrix_append_row(Matrix* matrix)
 {
     if(matrix == NULL) /* null guard */
     {
@@ -176,7 +250,7 @@ void matrix_add_row(Matrix* matrix)
     matrix->rows++;
 }
 
-void matrix_add_col(Matrix* matrix)
+void matrix_append_col(Matrix* matrix)
 {
     if(matrix == NULL) /* null guard */
     {
@@ -417,6 +491,8 @@ Matrix* matrix_transpose(Matrix* matrix)
     return transpose;
 }
 
+
+
 /**
  * Returns a `rows` by `cols` random matrix
  *
@@ -575,8 +651,8 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
         for(unsigned int i=j+1;i<A->rows;i++)
         {
             long double mult = A->cells[i][j] / A->cells[j][j];
-            matrix_sub_row(i, j, mult, A);
-            matrix_sub_row(i, j, mult, b); /* update soln vector */
+            matrix_add_row(i, j, -1 * mult, A);
+            matrix_add_row(i, j, -1 * mult, b); /* update soln vector */
         }
     }
 
@@ -620,8 +696,8 @@ void pad_to_power_2(Matrix* matrix)
 
     for(unsigned int i=matrix->rows;i<n;i++)
     {
-        matrix_add_row(matrix);
-        matrix_add_col(matrix);
+        matrix_append_row(matrix);
+        matrix_append_col(matrix);
     }
 }
 
