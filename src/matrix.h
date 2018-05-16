@@ -23,7 +23,7 @@ Matrix* matrix_copy(Matrix* matrix);
 /* Elementary Row Operations */
 void matrix_swap_rows(unsigned int a, unsigned int b, Matrix* matrix);
 void matrix_scale_row(unsigned int a, long double k, Matrix* matrix);
-void matrix_add_rows(unsigned int a, unsigned int b, long double k,
+void matrix_add_row(unsigned int a, unsigned int b, long double k,
         Matrix* matrix);
 
 /* Arithmetic Operations */

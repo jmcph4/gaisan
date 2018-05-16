@@ -162,10 +162,12 @@ void matrix_swap_rows(unsigned int a, unsigned int b, Matrix* matrix)
         return;
     }
 
-    memcpy(tmp, matrix->cells[a], matrix->rows * sizeof(long double));
-    memcpy(matrix->cells[b], matrix->cells[a],
-            matrix->rows * sizeof(long double));
-    memcpy(matrix->cells[b], tmp, matrix->rows * sizeof(long double));
+    for(unsigned int i=0;i<matrix->cols;i++)
+    {
+        tmp[i] = matrix->cells[a][i];
+        matrix->cells[a][i] = matrix->cells[b][i];
+        matrix->cells[b][i] = tmp[i];
+    }
 
     free(tmp);
 }
@@ -687,6 +689,33 @@ Matrix* matrix_bottom_augment(Matrix* a, Matrix* b)
     return c;
 }
 
+int find_max_row(unsigned int col, unsigned int start_row, Matrix* matrix)
+{
+    if(matrix == NULL)
+    {
+        return -1;
+    }
+
+    if(col >= matrix->cols || start_row >= matrix->rows)
+    {
+        return -1;
+    }
+
+    unsigned int max_pos = start_row;
+    long double max_val = fabs(matrix->cells[start_row][col]);
+
+    for(unsigned int i=start_row;i<matrix->rows;i++)
+    {
+        if(fabs(matrix->cells[i][col]) > max_val)
+        {
+            max_val = fabs(matrix->cells[i][col]);
+            max_pos = i;
+        }
+    }
+
+    return max_pos;
+}
+
 /**
  * Performs Gaussian elimination on the system defined by `Ax=b`
  *
@@ -713,39 +742,89 @@ Matrix* matrix_gauss_elim(Matrix* A, Matrix* b)
 
     Matrix* x = matrix_init(A->cols, b->cols);
 
-    for(unsigned int j=0;j<A->rows;j++)
+    if(x == NULL)
     {
-        if(fabs(A->cells[j][j]) == 0.0) /* zero pivot */
-        {
-            matrix_free(x);
-            return NULL;
-        }
+        return NULL;
+    }
 
-        for(unsigned int i=j+1;i<A->rows;i++)
+    /* create working copies of relevant matrices */
+    Matrix* A_copy = matrix_copy(A);
+
+    if(A_copy == NULL)
+    {
+        return NULL;
+    }
+
+    Matrix* b_copy = matrix_copy(b);
+
+    if(b_copy == NULL)
+    {
+        return NULL;
+    }
+
+    unsigned int m = A_copy->rows;
+    unsigned int n = A_copy->cols;
+
+    /* peform forward-elimination */
+    unsigned int h = 0;
+    unsigned int k = 0;
+    unsigned int i_max = 0;
+    long double f = 0.0;
+
+    while(h < m && k < n)
+    {
+        i_max = find_max_row(k, h, A_copy);
+
+        if(A_copy->cells[i_max][k] == 0)
         {
-            long double mult = A->cells[i][j] / A->cells[j][j];
-            matrix_add_row(i, j, -1 * mult, A);
-            matrix_add_row(i, j, -1 * mult, b); /* update soln vector */
+            k++;
+            continue;
+        }
+        else
+        {
+            matrix_swap_rows(h, i_max, A_copy);
+            matrix_swap_rows(h, i_max, b_copy);
+
+            for(unsigned int i=h+1;i<m;i++)
+            {
+                f = A_copy->cells[i][k] / A_copy->cells[h][k];
+                A_copy->cells[i][k] = 0;
+                
+                matrix_add_row(i, h, -1 * f, A_copy);
+                matrix_add_row(i, h, -1 * f, b_copy);
+                
+            }
+
+            h++;
+            k++;
         }
     }
 
     /* perform back-substitution */
-    for(unsigned int i=A->cols-1;i!=UINT_MAX;i--)
+    for(unsigned int i=n-1;i!=UINT_MAX;i--)
     {
-        for(unsigned int j=i+1;j<b->cols;j++)
+        for(unsigned int j=i;j<n;j++)
         {
-            for(unsigned int k=0;k<b->cols;k++)
+            for(unsigned int l=0;l<b_copy->cols;l++)
             {
-                b->cells[i][k] = b->cells[i][k] - A->cells[i][j] *
-                    x->cells[j][k];
+                if(A_copy->cells[i][i] == 0.0) /* infinitely many solutions */
+                {
+                    return NULL;
+                }
+
+                b_copy->cells[i][l] -= A_copy->cells[i][j] * x->cells[j][l];
             }
         }
         
         for(unsigned int j=0;j<x->cols;j++)
         {
-            x->cells[i][j] = b->cells[i][j] / A->cells[i][i];
+            x->cells[i][j] = b_copy->cells[i][j] / A_copy->cells[i][i];
         }
     }
+
+    /* tidy up */
+    matrix_free(A_copy);
+    matrix_free(b_copy);
 
     return x;
 }
