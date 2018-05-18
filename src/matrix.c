@@ -462,6 +462,19 @@ Matrix* matrix_multiply(Matrix* a, Matrix* b)
 }
 
 /* Comparsion */
+
+/**
+ * Determines if two matrices, `a`, and `b`, are equal
+ *
+ * @param a
+ *      first matrix
+ *
+ * @param b
+ *      second matrix
+ *
+ * @return true iff. matrices are equal, false otherwise
+ *
+ * */
 bool matrix_equal(Matrix* a, Matrix* b)
 {
     if(a == NULL || b == NULL) /* null guard */
