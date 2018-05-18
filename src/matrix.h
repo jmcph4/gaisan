@@ -8,6 +8,8 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
+#include <stdbool.h>
+
 typedef struct
 {
     unsigned int rows;
@@ -31,6 +33,9 @@ Matrix* matrix_add(Matrix* a, Matrix* b);
 Matrix* matrix_scale(long double k, Matrix* matrix);
 Matrix* matrix_subtract(Matrix* a, Matrix* b);
 Matrix* matrix_multiply(Matrix* a, Matrix* b);
+
+/* Comparison */
+bool matrix_equal(Matrix* a, Matrix* b);
 
 /* Miscellaneous Operations */
 Matrix* matrix_transpose(Matrix* matrix);

@@ -6,6 +6,7 @@
  *
  * */
 #include <stdlib.h>
+#include <stdbool.h>
 #include <math.h>
 #include <time.h>
 #include <string.h>
@@ -460,6 +461,34 @@ Matrix* matrix_multiply(Matrix* a, Matrix* b)
     return res;
 }
 
+/* Comparsion */
+bool matrix_equal(Matrix* a, Matrix* b)
+{
+    if(a == NULL || b == NULL) /* null guard */
+    {
+        return false;
+    }
+
+    if(a->rows != b->rows || a->cols != b->cols) /* different sizes */
+    {
+        return false;
+    }
+
+    /* compare elementwise */
+    for(unsigned int i=0;i<a->rows;i++)
+    {
+        for(unsigned int j=0;j<a->cols;j++)
+        {
+            if(a->cells[i][j] != b->cells[i][j])
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 /**
  * Computes the inverse of the matrix, `matrix`
  *
@@ -486,6 +515,12 @@ Matrix* matrix_invert(Matrix* matrix)
     if(I == NULL)
     {
         return NULL;
+    }
+
+    /* handle the case where identity is provided as input */
+    if(matrix_equal(matrix, I))
+    {
+        return I;
     }
 
     Matrix* A = matrix_copy(matrix);
